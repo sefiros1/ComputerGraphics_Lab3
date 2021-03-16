@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Lab3</title>
+		<!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+		<meta
+			http-equiv="Content-Security-Policy"
+			content="default-src 'self'; script-src 'self'"
+		/>
+		<meta
+			http-equiv="X-Content-Security-Policy"
+			content="default-src 'self'; script-src 'self'"
+		/>
+		<link rel="stylesheet" href="./style.css">
+	</head>
+	<body>
+		<div class="control-panel">
+			<div>
+				<button id="js-clear">Clear</button>
+			</div>
+		</div>
+		<canvas id="js-canvas" width="1000" height="1000"></canvas>
+		<script src="./dist/renderer.js"></script>
+	</body>
+</html>

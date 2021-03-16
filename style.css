@@ -1,0 +1,45 @@
+body {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    align-items: stretch;
+    height: 100vh;
+    /* max-height: 1000px; */
+}
+
+.control-panel {
+    /* width: 200px; */
+    background: grey;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+    align-items: flex-start;
+}
+
+.control-panel > div {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.control-panel * {
+    margin: 10px;
+}
+
+.control-panel label {
+    margin: 0 10px;
+}
+
+canvas {
+    width: 1000px;
+    height: 1000px;
+    flex-shrink: 0;
+    flex-grow: 0;
+    background-color: beige;
+    padding: 10px;
+}
