@@ -28,7 +28,7 @@ body {
 }
 
 .control-panel * {
-    margin: 10px;
+    margin: 5px;
 }
 
 .control-panel label {
@@ -42,4 +42,9 @@ canvas {
     flex-grow: 0;
     background-color: beige;
     padding: 10px;
+}
+
+input {
+    width: 100px;
+
 }
