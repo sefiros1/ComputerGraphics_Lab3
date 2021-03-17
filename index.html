@@ -20,28 +20,30 @@
 				<button id="js-clear">Clear</button>
 				<button id="js-start">Start Algorithm</button>
 			</div>
-			<div>
-				<div>Line Point 1:</div>
-				<label for="js-x1">x:</label>
-				<input id="js-x1"></input>
-				<label for="js-y1">y:</label>
-				<input id="js-y1"></input>
-			</div>
-			<div>
-				<div>Line Point 2:</div>
-				<label for="js-x2">x:</label>
-				<input id="js-x2"></input>
-				<label for="js-y2">y:</label>
-				<input id="js-y2"></input>
-			</div>
-			<div>
-				<div>Circle</div>
-				<label for="js-x">x:</label>
-				<input id="js-x"></input>
-				<label for="js-y">y:</label>
-				<input id="js-y"></input>
-				<label for="js-r">r:</label>
-				<input id="js-r"></input>
+			<div style="display: flex; flex-direction: column;">
+				<div style="display: flex; flex-direction: row;">
+					Line Point 1:
+					<label for="js-x1">x:</label>
+					<input id="js-x1"></input>
+					<label for="js-y1">y:</label>
+					<input id="js-y1"></input>
+				</div>
+				<div style="display: flex; flex-direction: row;">
+					Line Point 2:
+					<label for="js-x2">x:</label>
+					<input id="js-x2"></input>
+					<label for="js-y2">y:</label>
+					<input id="js-y2"></input>
+				</div>
+				<div style="display: flex; flex-direction: row;">
+					Circle
+					<label for="js-x">x:</label>
+					<input id="js-x"></input>
+					<label for="js-y">y:</label>
+					<input id="js-y"></input>
+					<label for="js-r">r:</label>
+					<input id="js-r"></input>
+				</div>
 			</div>
 		</div>
 		<canvas id="js-canvas" width="1000" height="1000"></canvas>

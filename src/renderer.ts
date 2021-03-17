@@ -1,5 +1,5 @@
 const canvas = document.querySelector<HTMLCanvasElement>("#js-canvas");
-const relativeUnitSize = 20;
+const relativeUnitCount = 50;
 const enableGrid = true;
 const gridColor = "#C0C0C0";
 
@@ -23,14 +23,14 @@ class Point {
     }
 
     toRelative = (): Point => {
-        let unitWidth = canvas.width / relativeUnitSize;
-        let unitHeight = canvas.height / relativeUnitSize;
+        let unitWidth = canvas.width / relativeUnitCount;
+        let unitHeight = canvas.height / relativeUnitCount;
         return new Point((this.x - (canvas.width / 2)) / unitWidth, (this.y - (canvas.height / 2)) / unitHeight)
     }
 
     toAbsolute = (): Point => {
-        let unitWidth = canvas.width / relativeUnitSize;
-        let unitHeight = canvas.height / relativeUnitSize;
+        let unitWidth = canvas.width / relativeUnitCount;
+        let unitHeight = canvas.height / relativeUnitCount;
         return new Point((canvas.width / 2) + (this.x * unitWidth), (canvas.height / 2) - (this.y * unitHeight))
     }
 
@@ -104,7 +104,7 @@ class Point {
     }
 
     draw = () => {
-        drawCircle(this, .2, true);
+        drawCircle(this, 5*relativeUnitCount/canvas.height, true);
     }
 }
 
@@ -298,7 +298,7 @@ function drawCircle(p: Point, r: number, filled: boolean = false, color: string 
     ctx.beginPath();
     // ctx.moveTo(p.toAbsolute().x, p.toAbsolute().y);
     // ctx.stroke();
-    let unitHeight = canvas.height / relativeUnitSize;
+    let unitHeight = canvas.height / relativeUnitCount;
     ctx.arc(p.toAbsolute().x, p.toAbsolute().y, r*unitHeight, 0, Math.PI * 2, false);
     ctx.fillStyle = color;
     ctx.strokeStyle = color;
@@ -316,51 +316,51 @@ function drawText(p1: Point, text: string, fontSize: string = "20px", color: str
 
 function drawCoordinatePlane() {
     //X
-    drawLine(new Point(-relativeUnitSize/2, 0), new Point(relativeUnitSize/2, 0))
+    drawLine(new Point(-relativeUnitCount/2, 0), new Point(relativeUnitCount/2, 0))
     //Y
-    drawLine(new Point(0, relativeUnitSize/2), new Point(0, -relativeUnitSize/2))
+    drawLine(new Point(0, relativeUnitCount/2), new Point(0, -relativeUnitCount/2))
     
     // X mark
-    drawLine(new Point(relativeUnitSize/2, 0), new Point(relativeUnitSize/2 - relativeUnitSize/100, relativeUnitSize/100))
-    drawLine(new Point(relativeUnitSize/2, 0), new Point(relativeUnitSize/2 - relativeUnitSize/100, -relativeUnitSize/100))
-    drawText(new Point(relativeUnitSize/2 - relativeUnitSize/50, relativeUnitSize/50), "X");
+    drawLine(new Point(relativeUnitCount/2, 0), new Point(relativeUnitCount/2 - relativeUnitCount/100, relativeUnitCount/100))
+    drawLine(new Point(relativeUnitCount/2, 0), new Point(relativeUnitCount/2 - relativeUnitCount/100, -relativeUnitCount/100))
+    drawText(new Point(relativeUnitCount/2 - relativeUnitCount/50, relativeUnitCount/50), "X");
 
     // Y mark
-    drawLine(new Point(0, relativeUnitSize/2), new Point(relativeUnitSize/100, relativeUnitSize/2 - relativeUnitSize/100))
-    drawLine(new Point(0, relativeUnitSize/2), new Point(-relativeUnitSize/100, relativeUnitSize/2 - relativeUnitSize/100))
-    drawText(new Point(relativeUnitSize/50, relativeUnitSize/2 - relativeUnitSize/50), "Y");
+    drawLine(new Point(0, relativeUnitCount/2), new Point(relativeUnitCount/100, relativeUnitCount/2 - relativeUnitCount/100))
+    drawLine(new Point(0, relativeUnitCount/2), new Point(-relativeUnitCount/100, relativeUnitCount/2 - relativeUnitCount/100))
+    drawText(new Point(relativeUnitCount/50, relativeUnitCount/2 - relativeUnitCount/50), "Y");
 
-    let unitWidth = canvas.width / relativeUnitSize;
+    let unitWidth = canvas.width / relativeUnitCount;
     let unitCountX = ((canvas.width / 2) / unitWidth);
     for (let i = 1; i < unitCountX; i++){
-        drawLine(new Point(-i, -relativeUnitSize/200), new Point(-i, relativeUnitSize/200));
-        drawLine(new Point(i, -relativeUnitSize/200), new Point(i, relativeUnitSize/200));
+        drawLine(new Point(-i, -relativeUnitCount/200), new Point(-i, relativeUnitCount/200));
+        drawLine(new Point(i, -relativeUnitCount/200), new Point(i, relativeUnitCount/200));
 
         if (enableGrid) {
-            drawLine(new Point(-i, relativeUnitSize/2), new Point(-i, -relativeUnitSize/2), gridColor)
-            drawLine(new Point(i, relativeUnitSize/2), new Point(i, -relativeUnitSize/2), gridColor)
+            drawLine(new Point(-i, relativeUnitCount/2), new Point(-i, -relativeUnitCount/2), gridColor)
+            drawLine(new Point(i, relativeUnitCount/2), new Point(i, -relativeUnitCount/2), gridColor)
         }
 
-        if (relativeUnitSize >= 50 && i % 5 === 0 || relativeUnitSize < 50) {
-            drawText(new Point(-i, -1.5 * relativeUnitSize/100), (-i).toString(), "10px")
-            drawText(new Point(i, -1.5 * relativeUnitSize/100), (i).toString(), "10px")
+        if (relativeUnitCount >= 50 && i % 5 === 0 || relativeUnitCount < 50) {
+            drawText(new Point(-i, -1.5 * relativeUnitCount/100), (-i).toString(), "10px")
+            drawText(new Point(i, -1.5 * relativeUnitCount/100), (i).toString(), "10px")
         }
     }
 
-    let unitHeight = canvas.height / relativeUnitSize;
+    let unitHeight = canvas.height / relativeUnitCount;
     let unitCountY = ((canvas.height / 2) / unitHeight);
     for (let i = 1; i < unitCountY; i++){
-        drawLine(new Point(-relativeUnitSize/200, -i), new Point(relativeUnitSize/200, -i));
-        drawLine(new Point(-relativeUnitSize/200, i), new Point(relativeUnitSize/200, i));
+        drawLine(new Point(-relativeUnitCount/200, -i), new Point(relativeUnitCount/200, -i));
+        drawLine(new Point(-relativeUnitCount/200, i), new Point(relativeUnitCount/200, i));
 
         if (enableGrid) {
-            drawLine(new Point(-relativeUnitSize/2, -i), new Point(relativeUnitSize/2, -i), gridColor)
-            drawLine(new Point(-relativeUnitSize/2, i), new Point(relativeUnitSize/2, i), gridColor)
+            drawLine(new Point(-relativeUnitCount/2, -i), new Point(relativeUnitCount/2, -i), gridColor)
+            drawLine(new Point(-relativeUnitCount/2, i), new Point(relativeUnitCount/2, i), gridColor)
         }
 
-        if (relativeUnitSize >= 50 && i % 5 === 0 || relativeUnitSize < 50) {
-            drawText(new Point(-1.5 * relativeUnitSize/100, -i), (-i).toString(), "10px")
-            drawText(new Point(-1.5 * relativeUnitSize/100, i), (i).toString(), "10px")
+        if (relativeUnitCount >= 50 && i % 5 === 0 || relativeUnitCount < 50) {
+            drawText(new Point(-1.5 * relativeUnitCount/100, -i), (-i).toString(), "10px")
+            drawText(new Point(-1.5 * relativeUnitCount/100, i), (i).toString(), "10px")
         }
     }
 }
@@ -454,7 +454,7 @@ function main() {
                 linePoints.push(a[i]);
                 i++;
                 if (a.length <= i) clearInterval(lineAlgorithmTimer)
-            }, 200)
+            }, 100)
         }
 
         if (circle) {
@@ -473,7 +473,7 @@ function main() {
                 circlePoints.push(circle.p.add(p.reflOxy().reflOx().reflOy()));
                 i++;
                 if (a.length <= i) clearInterval(circleAlgorithmTimer)
-            }, 500)
+            }, 100)
         }
     })
 
@@ -482,9 +482,11 @@ function main() {
     });
 
     document.addEventListener('keypress', (e) => {
-        if (e.key === ' '){
-            circle = new Circle(new Point(0, 0), 8);
+        if (e.key === 's'){
+            // circle = new Circle(new Point(0, 0), 8);
+            // document.querySelector<HTMLButtonElement>('#js-start').click();
             document.querySelector<HTMLButtonElement>('#js-start').click();
+
         }
     })
 }
