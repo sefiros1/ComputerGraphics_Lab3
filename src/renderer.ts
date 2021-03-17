@@ -8,7 +8,7 @@ class Point {
     y: number;
     z: number;
 
-    constructor(x: number, y: number, z: number = 1) {
+    constructor(x: number, y: number, z: number = 0) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -87,6 +87,22 @@ class Point {
         ]))
     }
 
+    reflOxy() {
+        return this.multiplyByMatrix(new Matrix3([
+            0, 1, 0,
+            1, 0, 0,
+            0, 0, 1
+        ]))
+    }
+
+    add(p: Point) {
+        let x = this.x + p.x
+        let y = this.y + p.y
+        let z = this.z + p.z
+
+        return new Point(x, y, z);
+    }
+
     draw = () => {
         drawCircle(this, .2, true);
     }
@@ -136,14 +152,15 @@ class Line {
         if (Math.abs(p2.x - p1.x) < Math.abs(p2.y - p1.y)){
             let sign = Math.sign(p2.y - p1.y)
             rotateFi = - Math.PI / 2 * sign;
-            p2 = p2.rotate(rotateFi, p1);
+            p1 = p1.rotate(rotateFi);
+            p2 = p2.rotate(rotateFi);
         }
 
-        // if (p1.y < p2.y){
-        //     p1 = p1.reflOx();
-        //     p2 = p2.reflOx();
-        //     reflOxFlag = true;
-        // }
+        if (p1.y < p2.y){
+            p1 = p1.reflOx();
+            p2 = p2.reflOx();
+            reflOxFlag = true;
+        }
 
         if (p1.x > p2.x){
             p1 = p1.reflOy();
@@ -153,44 +170,38 @@ class Line {
 
         // line = new Line(p1, p2);
 
-        let x1 = Math.round(p1.x);
-        let y1 = Math.round(p1.y);
-        let x2 = Math.round(p2.x);
-        let y2 = Math.round(p2.y);
+        // let x1 = Math.round(p1.x);
+        // let y1 = Math.round(p1.y);
+        // let x2 = Math.round(p2.x);
+        // let y2 = Math.round(p2.y);
 
-        // p = new Point(x1, y1)
-        // if (reflOyFlag) p = p.reflOy();
-        // if (reflOxFlag) p = p.reflOx();
-        // if (rotateFi) p = p.rotate(-rotateFi, p1);
-        // result.push(p);
+        let x1 = Math.floor(p1.x);
+        let y1 = Math.ceil(p1.y);
+        let x2 = Math.ceil(p2.x);
+        let y2 = Math.floor(p2.y);
 
         let deltax = Math.abs(x2 - x1);
         let deltay = Math.abs(y2 - y1);
         let error = 0;
         let deltaerr = deltay;
         let y = y1;
-        let diry = Math.sign(y2 - y1);
-        for (let x = x1; x < x2; x++){
-            console.log(`x = ${x}`);
-            console.log(`error raw = ${error}`);
-            console.log(`error = ${error / (deltax)}`);
+        // let diry = Math.sign(y2 - y1);
+        for (let x = x1; x <= x2; x++){
+            // console.log(`x = ${x}`);
+            // console.log(`error raw = ${error}`);
+            // console.log(`error = ${error / (deltax)}`);
             p = new Point(x, y)
             if (reflOyFlag) p = p.reflOy();
             if (reflOxFlag) p = p.reflOx();
-            if (rotateFi) p = p.rotate(-rotateFi, p1);
+            if (rotateFi) p = p.rotate(-rotateFi);
             result.push(p);
             error += deltaerr;
             if (error * 2 > deltax){
-                y += diry;
+                // y += diry;
+                y--;
                 error -= deltax;
             }
         }
-
-        // p = new Point(x2, y2)
-        // if (reflOyFlag) p = p.reflOy();
-        // if (reflOxFlag) p = p.reflOx();
-        // if (rotateFi) p = p.rotate(-rotateFi, p1);
-        // result.push(p);
 
         return result;
     }
@@ -211,25 +222,52 @@ class Circle {
         this.r = r;
     }
 
+    /*
+    P(0,R)          E
+    +-------------+
+                  |
+                  |
+                 --- M(1, R - 1/2) 
+                  |
+                  |
+                  +
+                    SE
+
+    f(x,y) = x^2 + y^2 - R^2 
+    -- f > 0 - точка вне круга
+    -- f = 0 - точка на окружности
+    -- f < 0 - точка внутри круга
+    F(M) = f(x+1, y - 1/2) = ... = x^2 + 2x + 1 + y^2 - y + 1/4 - R^2 
+    f(x+2, y - 1/2) = ... = F(M) + 2x + 3
+    f(x+2, y - 3/2) = ... = F(M) + 2x - 2y + 5
+
+    f(M0) = f(1, R-1/2) = ... = 5/4 - R
+
+    incrE = 2x + 3
+    incrSE = 2x - 2y + 5
+    if (picked E) incrE += 2 incrSE += 2
+    if (picked SE) incrE +=2 incrSE += 4
+     */
     bresenham(): Point[] {
         let result: Point[] = [];
-        
         let x = 0;
         let y = this.r;
-        let delta = 1 - 2 * this.r;
-        let error = 0;
-        while (y >= 0) {
+        // 1 вместо 5/4 т.к. 1/4 не влияет на результат
+        let error = 1 - this.r;
+        let deltaE = 3;
+        let deltaSE = 5 - 2*this.r
+        while (y >= x) {
             result.push(new Point(x, y));
-            error = 2 * (delta + y) - 1;
-            if ((delta < 0) && (error <= 0)){
-                delta += 2 * ++x + 1
-                continue
+            if (error >= 0) {
+                y--;
+                error +=  deltaSE;
+                deltaSE += 4;
+            } else {
+                error += deltaE;
+                deltaSE += 2;
             }
-            if ((delta > 0) && (error > 0)){
-                delta -= 2 * --y + 1
-                continue
-            }
-            delta += 2 * (++x - --y)
+            deltaE += 2;
+            x++;
         }
         return result;
     }
@@ -399,6 +437,8 @@ function main() {
     })
 
     document.querySelector('#js-start').addEventListener('click', () => {
+        linePoints = [];
+        circlePoints = [];
         if (line) {
             let a = line.bresenham();
             let i = 0;
@@ -407,7 +447,7 @@ function main() {
                 linePoints.push(a[i]);
                 i++;
                 if (a.length <= i) clearInterval(lineAlgorithmTimer)
-            }, 500)
+            }, 200)
         }
 
         if (circle) {
@@ -415,10 +455,15 @@ function main() {
             let i = 0;
             if (circleAlgorithmTimer) clearInterval(circleAlgorithmTimer);
             circleAlgorithmTimer = setInterval(() => {
-                circlePoints.push(new Point(circle.p.x + a[i].x, circle.p.y + a[i].y));
-                circlePoints.push(new Point(circle.p.x + a[i].x, circle.p.y - a[i].y));
-                circlePoints.push(new Point(circle.p.x - a[i].x, circle.p.y + a[i].y));
-                circlePoints.push(new Point(circle.p.x - a[i].x, circle.p.y - a[i].y));
+                let p = new Point(a[i].x, a[i].y)
+                circlePoints.push(circle.p.add(p));
+                circlePoints.push(circle.p.add(p.reflOx()));
+                circlePoints.push(circle.p.add(p.reflOy()));
+                circlePoints.push(circle.p.add(p.reflOx().reflOy()));
+                circlePoints.push(circle.p.add(p.reflOxy()));
+                circlePoints.push(circle.p.add(p.reflOxy().reflOx()));
+                circlePoints.push(circle.p.add(p.reflOxy().reflOy()));
+                circlePoints.push(circle.p.add(p.reflOxy().reflOx().reflOy()));
                 i++;
                 if (a.length <= i) clearInterval(circleAlgorithmTimer)
             }, 500)
@@ -428,6 +473,13 @@ function main() {
     document.querySelectorAll('input').forEach(e => {
         e.addEventListener('input', onVarsUpdate);
     });
+
+    document.addEventListener('keypress', (e) => {
+        if (e.key === ' '){
+            circle = new Circle(new Point(0, 0), 8);
+            document.querySelector<HTMLButtonElement>('#js-start').click();
+        }
+    })
 }
 
 document.addEventListener("DOMContentLoaded", main)
