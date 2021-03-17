@@ -175,10 +175,15 @@ class Line {
         // let x2 = Math.round(p2.x);
         // let y2 = Math.round(p2.y);
 
-        let x1 = Math.floor(p1.x);
-        let y1 = Math.ceil(p1.y);
-        let x2 = Math.ceil(p2.x);
-        let y2 = Math.floor(p2.y);
+        // let x1 = Math.floor(p1.x);
+        // let y1 = Math.ceil(p1.y);
+        // let x2 = Math.ceil(p2.x);
+        // let y2 = Math.floor(p2.y);
+
+        let x1 = Math.round(p1.x);
+        let y1 = Math.round(p1.y);
+        let x2 = Math.round(p2.x);
+        let y2 = Math.round(p2.y);
 
         let deltax = Math.abs(x2 - x1);
         let deltay = Math.abs(y2 - y1);
@@ -186,15 +191,17 @@ class Line {
         let deltaerr = deltay;
         let y = y1;
         // let diry = Math.sign(y2 - y1);
-        for (let x = x1; x <= x2; x++){
+        for (let x = x1; x < x2; x++){
             // console.log(`x = ${x}`);
             // console.log(`error raw = ${error}`);
             // console.log(`error = ${error / (deltax)}`);
-            p = new Point(x, y)
-            if (reflOyFlag) p = p.reflOy();
-            if (reflOxFlag) p = p.reflOx();
-            if (rotateFi) p = p.rotate(-rotateFi);
-            result.push(p);
+            if (x > x1) {
+                p = new Point(x, y)
+                if (reflOyFlag) p = p.reflOy();
+                if (reflOxFlag) p = p.reflOx();
+                if (rotateFi) p = p.rotate(-rotateFi);
+                result.push(p);
+            }
             error += deltaerr;
             if (error * 2 > deltax){
                 // y += diry;
